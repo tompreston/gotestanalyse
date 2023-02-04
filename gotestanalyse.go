@@ -121,7 +121,11 @@ func countResults(testResults []TestResult, result string) int {
 }
 
 func main() {
-	testEvents, err := parseTestEvents("test-output.log")
+	jsonFile := os.Getenv("GOTESTSUM_JSONFILE")
+	if jsonFile == "" {
+		log.Fatalln("GOTESTSUM_JSONFILE is not set")
+	}
+	testEvents, err := parseTestEvents(jsonFile)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -137,7 +141,7 @@ func main() {
 	// TODO report to backend
 
 	fmt.Printf(
-		"%v tests, %v pass, %v skip, %v flaky, %v fail\n",
+		"%v unique tests, %v pass, %v skipped, %v flaky, %v failure\n",
 		numTests,
 		numPass,
 		numSkip,
